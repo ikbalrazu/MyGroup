@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+{% for blog in post %}
+<article class="media content-section" style="height: 350px; ">
+  <img class="rounded-circle article-img" src="{{ blog.author.profile.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ blog.author }}</a>
+        <small class="text-muted">{{ blog.date_posted|date:"F d, Y" }}</small>
+      </div> 
+      <h2><a class="article-title" href="{% url 'postdetail' blog.id %}" style="font-size: 25px;">{{ blog.title|slice:":50" }}</a></h2>
+      <div class="row">
+          <div class="col-lg-6">
+              <img src="{{ blog.post_img.url }}" style="width: 315px; height: 240px; padding: 2px";>
+          </div>
+          <div class="col-lg-6">
+              <p class="article-content">{{ blog.content|slice:":300" }} <a href="{% url 'postdetail' blog.id %}">...Read More</a></p>
+          </div>
+      </div>
+     
+         
+    </div>
+  </article>
+{% endfor %}
+{% endblock content %}

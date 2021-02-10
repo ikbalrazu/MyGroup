@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <article class="media content-section">
+   <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.author }}</a>
+        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+        {% if object.author == user %}
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'postupdate' object.id %}">Update</a>
+          <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'postdelete' object.id %}">Delete</a>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ object.title }}</h2>
+      <img src="{{ object.post_img.url }}" style="width: 500px; height: 350px;margin-bottom: 10px;margin-left: 5px;">
+      <p class="article-content">{{ object.content }}</p>
+      {{ total_likes }} like{{ total_likes|pluralize }}
+      {% if request.user.is_authenticated %}
+      <form action="{% url 'like_post' %}" method="POST">
+         {% csrf_token %}
+         {% if is_liked %}
+         <button type="submit" name="post_id" value="{{ object.id }}" class="btn btn-danger">Liked</button>
+         {% else %}
+         <button type="submit" name="post_id" value="{{ object.id }}" class="btn btn-primary">Like</button>
+         {% endif %}
+      </form>
+      {% endif %}
+    </div>
+  </article>
+  <hr>
+  <div class="main-comment-section">
+    <div class="container-fluid mt-2">
+       <div class="form-group row">
+    <form method="POST">
+        {% csrf_token %}
+        {{comment_form.as_p}}
+        {% if request.user.is_authenticated %}
+        <input type="submit" value="Submit" class="btn btn-outline-success">
+        {% else %}
+        <input type="submit" value="Submit" class="btn btn-outline-success" disabled>
+        {% endif %} 
+       </form>
+         </div>
+     </div>
+  </div>
+
+  
+
+  <div class="main-comment-section">
+    {{ comments.count }} Comment{{ comments|pluralize }}
+    {% for comment in comments %}
+    <blockquote class="blockquote">
+      <p class="mb-0">{{ comment.content }}</p>
+      <footer class="blockquote-footer">by <cite title="Source Title">{{ comment.user }} | {{ comment.timestamp }} | </cite><a href="#">Delete</a></footer>
+    </blockquote>
+    {% endfor %}
+  </div>
+{% endblock content %}
